@@ -3,7 +3,7 @@ USER node-red
 RUN npm install node-red-dashboard \
     node-red-contrib-opcua \
     node-red-contrib-cip-ethernet-ip \
-    node-red-contrib-postgres-variable \
+    node-red-contrib-postgres-multi \
     node-red-contrib-influxdb \
     node-red-node-twilio \
     node-red-node-email \
