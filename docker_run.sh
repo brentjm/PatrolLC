@@ -18,6 +18,9 @@ docker build -t node-red-custom .
 echo "Creating volume"
 docker volume create node-red-data
 
+echo "Create network"
+docker network create ape
+
 echo "Starting container"
 docker run --detach --name node-red \
     --publish 1880:1880 \
