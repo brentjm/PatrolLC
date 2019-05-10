@@ -1,0 +1,18 @@
+<div layout="row" layout-align="space-between">
+    <select ng-model="item" ng_options="items.item.displayName.text for items in msg.payload">
+        <option value="">-- Objects Root --</option>
+    </select>
+</div>
+Press to Update:
+<div layout="row" layout-align="space-between">
+    <button ng-click="send({payload: {actiontype: 'browse', root: item}})">
+        Browse
+    </button>
+</div>
+<div layout="row" layout-align="space-between">
+    <ul>
+        <li ng-repeat="items in msg.pyload">
+            {{items.item.displayName.text}}: {{items.item.nodeId}}
+        </li>
+    </ul>
+</div>
