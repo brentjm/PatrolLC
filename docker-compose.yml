@@ -1,0 +1,17 @@
+version: '3.5'
+services:
+
+  node-red:
+    build: ./node-red
+    image: node-red-patrol
+    container_name: node-red-patrol
+    volumes:
+      - type: volume
+        source: node-red-patrol
+        target: /data
+    ports:
+      - "1885:1880"
+    restart: on-failure
+
+volumes:
+  node-red-patrol:
