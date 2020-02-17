@@ -13,5 +13,13 @@ services:
       - "1885:1880"
     restart: on-failure
 
+  socket-server:
+    build: ./socket-server
+    image: dotnet-socket-server
+    container_name: dotnet-socket-server
+    ports:
+      - "11000:11000"
+    restart: on-failure
+
 volumes:
   node-red-patrol:
