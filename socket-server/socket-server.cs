@@ -1,13 +1,38 @@
-using System;  
+using System;
 using System.Net;  
 using System.Net.Sockets;  
 using System.Text;  
+using Newtonsoft.Json;
   
+public class PatrolLC {
+    
+    public static void SelectFunction(string JSONString) {
+
+        dynamic methodInfo = JsonConvert.DeserializeObject("{ 'method': 'run' }");
+
+        switch (methodInfo)  {
+            case "RunMethod":
+                // Show the data on the console.  
+                Console.WriteLine( "RunMethod method requested, with data {0}", methodInfo);  
+                break;
+            default:
+                Console.WriteLine( "API request not understood (data={0})", methodInfo);  
+                break;
+        }
+  
+        //JsonConvert.SerializeObject(JSONString);
+        //Console.WriteLine(JSONString);
+    }
+}
+
+
 public class SynchronousSocketListener {  
   
     // Incoming data from the client.  
     public static string data = null;  
-  
+
+    public static PatrolLC patrolLC = null;
+
     public static void StartListening() {  
         // Data buffer for incoming data.  
         byte[] bytes = new Byte[1024];  
@@ -47,10 +72,12 @@ public class SynchronousSocketListener {
                         break;  
                     }  
                 }  
+
+                patrolLC.SelectFunction(data);
   
                 // Show the data on the console.  
                 Console.WriteLine( "Text received : {0}", data);  
-  
+
                 // Echo the data back to the client.  
                 byte[] msg = Encoding.ASCII.GetBytes(data);  
   
