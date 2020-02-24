@@ -4,25 +4,42 @@ using System.Net.Sockets;
 using System.Text;  
 using Newtonsoft.Json;
   
+public class Request {
+    // This class contains parameters necessary for all requests.
+    public string user = null;
+    public string id = null;
+    public string command = null;
+    public string method = null;
+}
+
 public class PatrolLC {
     
-    public static void SelectFunction(string JSONString) {
+    public PatrolLC() {}
+    public string errorMessage = "none";
 
-        dynamic methodInfo = JsonConvert.DeserializeObject("{ 'method': 'run' }");
+    public string SelectFunction(string JSONString) {
 
-        switch (methodInfo)  {
-            case "RunMethod":
-                // Show the data on the console.  
-                Console.WriteLine( "RunMethod method requested, with data {0}", methodInfo);  
+        Request request = JsonConvert.DeserializeObject<Request>(JSONString);
+        Console.WriteLine("Requested command: {0}", request.command);
+
+        switch (request.command)  {
+            case "run":
+                errorMessage = Run(request.method);
                 break;
             default:
-                Console.WriteLine( "API request not understood (data={0})", methodInfo);  
+                Console.WriteLine( "request {0} not found", request.command);  
+                errorMessage = "No such command";
                 break;
         }
-  
-        //JsonConvert.SerializeObject(JSONString);
-        //Console.WriteLine(JSONString);
+        return errorMessage;
     }
+
+    public string Run(string method) {
+        Console.WriteLine( "Executing run with method {0}", method);  
+        // API command here. Need a try/catch.
+        return "none";
+    }
+
 }
 
 
@@ -31,7 +48,7 @@ public class SynchronousSocketListener {
     // Incoming data from the client.  
     public static string data = null;  
 
-    public static PatrolLC patrolLC = null;
+    public static PatrolLC patrolLC = new PatrolLC();
 
     public static void StartListening() {  
         // Data buffer for incoming data.  
@@ -60,25 +77,23 @@ public class SynchronousSocketListener {
             // Start listening for connections.  
             while (true) {  
                 Console.WriteLine("Waiting for a connection...");  
-                // Program is suspended while waiting for an incoming connection.  
                 Socket handler = listener.Accept();  
                 data = null;  
   
-                // An incoming connection needs to be processed.  
+                // Encode the message as ASCII
                 while (true) {  
                     int bytesRec = handler.Receive(bytes);  
                     data += Encoding.ASCII.GetString(bytes,0,bytesRec);  
-                    if (data.IndexOf("<EOF>") > -1) {  
+                    if (data.IndexOf("}") > -1) {  
                         break;  
                     }  
                 }  
 
-                patrolLC.SelectFunction(data);
-  
-                // Show the data on the console.  
-                Console.WriteLine( "Text received : {0}", data);  
+                Console.WriteLine( "Raw text received : {0}", data);  
 
-                // Echo the data back to the client.  
+                data = patrolLC.SelectFunction(data);
+  
+                // Send completion message back to client.
                 byte[] msg = Encoding.ASCII.GetBytes(data);  
   
                 handler.Send(msg);  

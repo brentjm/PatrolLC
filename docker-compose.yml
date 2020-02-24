@@ -18,7 +18,7 @@ services:
     image: dotnet-socket-server
     container_name: dotnet-socket-server
     ports:
-      - "11000:11000"
+      - "11017:11017"
     restart: on-failure
 
 volumes:

@@ -1,5 +1,7 @@
 FROM microsoft/dotnet:latest
 
+RUN apt-get update && apt-get install -y vim-tiny
+
 RUN useradd -rm -d /home/dotnet -s /bin/bash -U -u 1000 dotnet\
     && mkdir /home/dotnet/socket_server
 COPY socket-server.cs socket_server.csproj /home/dotnet/socket_server/
