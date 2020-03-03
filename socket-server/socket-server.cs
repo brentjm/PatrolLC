@@ -5,7 +5,9 @@ using System.Text;
 using Newtonsoft.Json;
   
 public class Request {
-    // This class contains parameters necessary for all requests.
+    /* Class to define parameters used for LC methods. The parameters
+     * may be better defined as structures.
+     */
     public string user = null;
     public string id = null;
     public string command = null;
@@ -13,7 +15,14 @@ public class Request {
 }
 
 public class PatrolLC {
-    
+    /* Class that defines the LC methods. The entry point
+     * will be the SelectFunction, which will take the JSONString
+     * from the socket server and use a series of swicth-case
+     * to call a method that unpacks, and checks the passed
+     * arguments and then call the API method.
+     *
+     * The public
+     */
     public PatrolLC() {}
     public string errorMessage = "none";
 
@@ -44,35 +53,39 @@ public class PatrolLC {
 
 
 public class SynchronousSocketListener {  
-  
-    // Incoming data from the client.  
+    /* Server class binds to a localhost port and listens
+     * for a connection. Reads the port until a "}" is received
+     * indicating the end of a JSON string. A class member
+     * of a PatrolLC object is defined from which SelectFunction
+     * is called with the received socket data.
+     */
     public static string data = null;  
 
     public static PatrolLC patrolLC = new PatrolLC();
 
     public static void StartListening() {  
-        // Data buffer for incoming data.  
         byte[] bytes = new Byte[1024];  
   
-        // Establish the local endpoint for the socket.  
-        // Dns.GetHostName returns the name of the   
-        // host running the application.  
         IPHostEntry ipHostInfo = Dns.GetHostEntry(Dns.GetHostName());  
-        // Specify the container name instead of using a lookup
         IPAddress ipAddress = ipHostInfo.AddressList[0];  
+        // If the server fails, it may be due to the ipHostInfo.AddressList
+        // returning the IPV6 address. We want tie IPV4 address, so
+        // hard code the address.
         //IPAddress ipAddress = IPAddress.Parse("10.131.1.23");
+
         Console.WriteLine("Server host IP {0}", ipAddress);
+        // Create the endpoint address and port.
         IPEndPoint localEndPoint = new IPEndPoint(ipAddress, 11017);  
   
-        // Create a TCP/IP socket.  
         Socket listener = new Socket(ipAddress.AddressFamily,  
             SocketType.Stream, ProtocolType.Tcp );  
   
-        // Bind the socket to the local endpoint and   
-        // listen for incoming connections.  
+        // Bind the socket to the local endpoint and allow
+        // 2 incoming connections. Probably only want one in the
+        // final version, but use 2 for debugging purposes.
         try {  
             listener.Bind(localEndPoint);  
-            listener.Listen(10);  
+            listener.Listen(2);  
   
             // Start listening for connections.  
             while (true) {  
@@ -89,8 +102,10 @@ public class SynchronousSocketListener {
                     }  
                 }  
 
+                // Write the text to console for debugging.
                 Console.WriteLine( "Raw text received : {0}", data);  
 
+                // Call the PatrolLC method with the JSON object.
                 data = patrolLC.SelectFunction(data);
   
                 // Send completion message back to client.
