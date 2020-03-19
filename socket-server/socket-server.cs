@@ -90,14 +90,18 @@ public class SynchronousSocketListener {
             // Start listening for connections.  
             while (true) {  
                 Console.WriteLine("Waiting for a connection...");  
+                // Blocking wait for connection.
                 Socket handler = listener.Accept();  
+                Console.WriteLine("Connection");  
                 data = null;  
   
                 // Encode the message as ASCII
                 while (true) {  
+                    Console.WriteLine("{0}", data);  
                     int bytesRec = handler.Receive(bytes);  
                     data += Encoding.ASCII.GetString(bytes,0,bytesRec);  
                     if (data.IndexOf("}") > -1) {  
+                    //if (data.IndexOf("EOF") > -1) {  
                         break;  
                     }  
                 }  
