@@ -12,5 +12,5 @@ WORKDIR /home/dotnet/socket_server
 RUN dotnet add package Newtonsoft.Json\
     && dotnet publish -c release -r linux-x64 socket_server.csproj
 
-CMD ["/bin/bash", "-c", "sleep 1000"]
-#CMD ["/home/dotnet/socket_server/bin/release/netcoreapp2.1/linux-x64/socket_server"]
+#CMD ["/bin/bash", "-c", "sleep 1000"]
+CMD ["/home/dotnet/socket_server/bin/release/netcoreapp2.1/linux-x64/socket_server"]
