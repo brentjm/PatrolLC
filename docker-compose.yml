@@ -11,6 +11,7 @@ services:
         target: /data
     ports:
       - "1885:1880"
+      - "53880:53880"
     restart: on-failure
 
   socket-server:
